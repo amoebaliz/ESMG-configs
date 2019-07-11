@@ -1,7 +1,12 @@
 FOR MACBOOK Laptop: 
 
-* delete OR deactivate /src/FMS/mpp/affinity.c
-  - how to not call this file given a particular compile
+* deactivate /src/FMS/mpp/affinity.c
+  - delete lines containing affinity.c and the pattern affinity.o
+    from the files 'path_names' & 'Makefile' that are  generated 
+    during FMS compilation: 
+    
+       sed -i '' '/affinity.c/d' $MOM6_rundir/build/gnu/shared/repro/path_names
+       sed -i '' '/affinity.c/d' $MOM6_rundir/build/gnu/shared/repro/Makefile
+       sed -i '' 's/affinity.o//g' $MOM6_rundir/build/gnu/shared/repro/Makefile 
 
 
-* ATTEMPT : if apple implementation
