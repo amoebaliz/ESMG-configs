@@ -1,2 +1,9 @@
 FOR MACBOOK Laptop: 
-- delete/deactivate /src/FMS/mpp/affinity.c
+
+* delete OR deactivate /src/FMS/mpp/affinity.c
+  - how to not call this file given a particular compile
+
+* edit /src/FMS/memutils/memutils.F90 (may not be necessary) 
+304 ! EJD: Commented out due to  mac incompatibility 
+305 !#else
+306 !    call mem_dump(m)
