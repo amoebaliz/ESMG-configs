@@ -15,27 +15,31 @@ export PKG_CONFIG_PATH=${PKG_CONFIG_PATH}:/opt/local/lib/mpich-mp/pkgconfig
 
 cd $MOM6_rundir
 
-# Create blanl env file
-rm -Rf $MOM6_rundir/build/gnu/shared/repro/
-mkdir -p build/gnu/shared/repro/
+# Create blank env file
+rm -Rf $MOM6_rundir/build
 echo > build/gnu/env
 
 mkdir -p build/mkmf
+# COPY OVER binary files
 cp -r $MOM6_installdir/src/mkmf/bin $MOM6_rundir/build/mkmf/bin
 cp -r $MOM6_installdir/src/mkmf/templates $MOM6_rundir/build/mkmf/templates
 cp $MOM6_installdir/src/mkmf/templates/macOS-gnu8-mpich3.mk   $MOM6_rundir/build/mkmf/templates
 
 compile_fms=1
 compile_mom=1
-
 if [ $compile_fms == 1 ] ; then
    # Compile FMS shared code.
-   rm -Rf $MOM6_rundir/build/gnu/shared/repro/
    mkdir -p $MOM6_rundir/build/gnu/shared/repro/
    (cd $MOM6_rundir/build/gnu/shared/repro/; rm -f path_names; \
    $MOM6_rundir/build/mkmf/bin/list_paths -l $MOM6_installdir/src/FMS; \
    $MOM6_rundir/build/mkmf/bin/mkmf -t $MOM6_rundir/build/mkmf/templates/macOS-gnu8-mpich3.mk -p libfms.a -c "-Duse_libMPI -Duse_netCDF -DSPMD" path_names)
 
+   # EJD: REMOVE ALL REFERENCES TO affinity.c & affinity.o from path_names & Makefile
+   #      FOR MACOSX COMPILE
+   sed -i '' '/affinity.c/d' $MOM6_rundir/build/gnu/shared/repro/path_names
+   sed -i '' '/affinity.c/d' $MOM6_rundir/build/gnu/shared/repro/Makefile
+   sed -i '' 's/affinity.o//g' $MOM6_rundir/build/gnu/shared/repro/Makefile 
+  
    # BUILD FMS library
    (cd $MOM6_rundir/build/gnu/shared/repro/; source ../../env; make NETCDF=3 REPRO=1 FC=mpif90 CC=mpicc libfms.a -j)
 
@@ -44,8 +48,7 @@ fi
 cd $MOM6_rundir
 
 if [ $compile_mom == 1 ] ; then
-    
-    rm -Rf $MOM6_rundir/build/gnu/ocean_only/repro/
+    #rm -Rf $MOM6_rundir/build/gnu/ocean_only/repro/
     mkdir -p $MOM6_rundir/build/gnu/ocean_only/repro/
     (cd $MOM6_rundir/build/gnu/ocean_only/repro/; rm -f path_names; \
     $MOM6_rundir/build/mkmf/bin/list_paths -l ./ $MOM6_installdir/src/MOM6/{config_src/dynamic_symmetric,config_src/solo_driver,src/{*,*/*}}/ ; \
