@@ -32,7 +32,7 @@ if [ $compile_fms == 1 ] ; then
    mkdir -p $MOM6_rundir/build/gnu/shared/repro/
    (cd $MOM6_rundir/build/gnu/shared/repro/; rm -f path_names; \
    $MOM6_rundir/build/mkmf/bin/list_paths -l $MOM6_installdir/src/FMS; \
-   $MOM6_rundir/build/mkmf/bin/mkmf -t $MOM6_rundir/build/mkmf/templates/macOS-gnu8-mpich3.mk -p libfms.a -c "-Duse_libMPI -Duse_netCDF -DSPMD" path_names)
+   $MOM6_rundir/build/mkmf/bin/mkmf -t $MOM6_rundir/build/mkmf/templates/macOS-gnu8-mpich3.mk -p libfms.a -c "-Duse_libMPI -Duse_netCDF -DSPMD -D__APPLE__" path_names)
 
    # EJD: REMOVE ALL REFERENCES TO affinity.c & affinity.o from path_names & Makefile
    #      FOR MACOSX COMPILE
